@@ -65,10 +65,10 @@ module Danger
          mergeFailedMessage = splittedResults.find { |r| r.match('^Automatic merge failed.*$') }
   
          if !"#{mergeFailedMessage}".empty? then
-            puts "It will be conflicted, be careful."
+            puts "   -> It will be conflicted, be careful."
             @@outputs << "#{remoteBranch}\n"
          elsif
-            puts "It will be merged safely."
+            puts "   -> It will be merged safely."
          end
 
          puts "Reset merge operation."
