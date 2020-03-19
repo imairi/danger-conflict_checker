@@ -38,8 +38,9 @@ module Danger
     end
   
     def detect(targetBranch)
-      print("Starting detect conflicts from plugin")
+      puts "Starting detect conflicts."
 
+      puts "Fetch remote branches for comparing to current."
       'git fetch'
 
       remoteBranches = `git branch -r`
@@ -50,13 +51,13 @@ module Danger
          remoteBranch = remoteBranch.delete(" ")
   
          unless remoteBranch.include?(targetBranch)  then
-             print("\n\n")
-             print("Skip try merging '#{remoteBranch}' .")
+             puts "\n\n"
+             puts "Skip try merging '#{remoteBranch}' ."
              next
          end
   
-         print("\n\n")
-         print("Try merging '#{remoteBranch}' .")
+         puts "\n\n"
+         puts "Try merging '#{remoteBranch}' ."
   
          mergeResults = `git merge #{remoteBranch} --no-commit --no-ff`
   
@@ -64,28 +65,23 @@ module Danger
          mergeFailedMessage = splittedResults.find { |r| r.match('^Automatic merge failed.*$') }
   
          if !"#{mergeFailedMessage}".empty? then
-            print("It will be conflicted, be careful.")
+            puts "It will be conflicted, be careful."
             @@outputs << "#{remoteBranch}\n"
          elsif
-            print("It will be merged safely.")
+            puts "It will be merged safely."
          end
 
-         print("Reset merge operation.")
+         puts "Reset merge operation."
          `git reset --merge`
       end
 
       if !@@outputs.empty? then
-          print("\n\n")
+          puts "\n\n"
           dangerMessage = "WARN: this branch will be conflicted if merge with the below branches.\n"
           dangerMessage << "#{@@outputs}"
-          print(dangerMessage)
+          puts dangerMessage
           return dangerMessage
       end
     end  
-
-    def print(text)
-        puts text
-    end
-
   end
 end
