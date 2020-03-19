@@ -1,3 +1,3 @@
 module ConflictChecker
-  VERSION = "0.0.9".freeze
+  VERSION = "0.0.16".freeze
 end

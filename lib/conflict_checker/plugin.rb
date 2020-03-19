@@ -24,11 +24,7 @@ module Danger
     # An attribute that you can read/write from your Dangerfile
     #
     # @return   [Array<String>]
-    attr_accessor :my_attribute
-
-    # A method that you can call from your Dangerfile
-    # @return   [Array<String>]
-    #
+    attr_accessor :targetBranch
 
     @@outputs = ""
 
@@ -37,7 +33,7 @@ module Danger
       # Your code
     end
   
-    def detect(targetBranch)
+    def detect(args=nil)
       puts "Starting detect conflicts."
 
       puts "Fetch remote branches for comparing to current."
