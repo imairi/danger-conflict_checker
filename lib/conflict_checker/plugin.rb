@@ -30,17 +30,17 @@ module Danger
     # @return   [Array<String>]
     #
 
-
-    @@isDanger = false
     @@outputs = ""
 
-    def initialize(isDanger)
-       @@isDanger = isDanger
+    def initialize(dangerfile)
+      super
+      # Your code
     end
   
-    def find
-      print("Starting detect conflicts.")
-      puts "Starting detect conflicts."
+    def detect(targetBranch)
+      print("Starting detect conflicts from plugin")
+
+      'git fetch'
 
       remoteBranches = `git branch -r`
   
@@ -49,14 +49,14 @@ module Danger
       splittedRemoteBranches.each do |remoteBranch|
          remoteBranch = remoteBranch.delete(" ")
   
-         unless remoteBranch.include?("feature")  then
-             puts "\n\n"
-             puts "Skip try merging '#{remoteBranch}' ."
+         unless remoteBranch.include?(targetBranch)  then
+             print("\n\n")
+             print("Skip try merging '#{remoteBranch}' .")
              next
          end
   
-         puts "\n\n"
-         puts "Try merging '#{remoteBranch}' ."
+         print("\n\n")
+         print("Try merging '#{remoteBranch}' .")
   
          mergeResults = `git merge #{remoteBranch} --no-commit --no-ff`
   
@@ -64,29 +64,26 @@ module Danger
          mergeFailedMessage = splittedResults.find { |r| r.match('^Automatic merge failed.*$') }
   
          if !"#{mergeFailedMessage}".empty? then
-            puts "It will be conflicted, be careful."
+            print("It will be conflicted, be careful.")
             @@outputs << "#{remoteBranch}\n"
          elsif
-            puts "It will be merged safely."
+            print("It will be merged safely.")
          end
 
-         puts "Reset merge operation."
+         print("Reset merge operation.")
          `git reset --merge`
       end
 
       if !@@outputs.empty? then
-          puts "\n\n"
+          print("\n\n")
           dangerMessage = "WARN: this branch will be conflicted if merge with the below branches.\n"
           dangerMessage << "#{@@outputs}"
-          puts dangerMessage
+          print(dangerMessage)
           return dangerMessage
       end
     end  
 
     def print(text)
-        unless !@@isDanger then
-            return
-        end 
         puts text
     end
 
