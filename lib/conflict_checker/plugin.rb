@@ -16,6 +16,9 @@ module Danger
   # @see  imairi/danger-conflict_checker
   # @tags monday, weekends, time, rattata
   #
+  Encoding.default_external = Encoding::UTF_8
+  Encoding.default_internal = Encoding::UTF_8
+
   class DangerConflictChecker < Plugin
 
     # An attribute that you can read/write from your Dangerfile
@@ -26,8 +29,66 @@ module Danger
     # A method that you can call from your Dangerfile
     # @return   [Array<String>]
     #
-    def warn_on_mondays
-      warn 'Trying to merge code on a Monday' if Date.today.wday == 1
+
+
+    @@isDanger = false
+    @@outputs = ""
+
+    def initialize(isDanger)
+       @@isDanger = isDanger
     end
+  
+    def find
+      print("Starting detect conflicts.")
+      puts "Starting detect conflicts."
+
+      remoteBranches = `git branch -r`
+  
+      splittedRemoteBranches = remoteBranches.split(/\r\n|\r|\n/)
+  
+      splittedRemoteBranches.each do |remoteBranch|
+         remoteBranch = remoteBranch.delete(" ")
+  
+         unless remoteBranch.include?("feature")  then
+             puts "\n\n"
+             puts "Skip try merging '#{remoteBranch}' ."
+             next
+         end
+  
+         puts "\n\n"
+         puts "Try merging '#{remoteBranch}' ."
+  
+         mergeResults = `git merge #{remoteBranch} --no-commit --no-ff`
+  
+         splittedResults = mergeResults.split(/\r\n|\r|\n/).compact.delete_if(&:empty?)
+         mergeFailedMessage = splittedResults.find { |r| r.match('^Automatic merge failed.*$') }
+  
+         if !"#{mergeFailedMessage}".empty? then
+            puts "It will be conflicted, be careful."
+            @@outputs << "#{remoteBranch}\n"
+         elsif
+            puts "It will be merged safely."
+         end
+
+         puts "Reset merge operation."
+         `git reset --merge`
+      end
+
+      if !@@outputs.empty? then
+          puts "\n\n"
+          dangerMessage = "WARN: this branch will be conflicted if merge with the below branches.\n"
+          dangerMessage << "#{@@outputs}"
+          puts dangerMessage
+          return dangerMessage
+      end
+    end  
+
+    def print(text)
+        unless !@@isDanger then
+            return
+        end 
+        puts text
+    end
+
   end
 end
