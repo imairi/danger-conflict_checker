@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    danger-conflict_checker (0.0.8)
+    danger-conflict_checker (0.0.16)
       danger-plugin-api (~> 1.0)
 
 GEM
