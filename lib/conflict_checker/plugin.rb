@@ -44,9 +44,9 @@ module Danger
       splittedRemoteBranches = remoteBranches.split(/\r\n|\r|\n/)
   
       splittedRemoteBranches.each do |remoteBranch|
-         remoteBranch = remoteBranch.delete(" ").sub(/^origin\//, "")
+         remoteBranch = remoteBranch.delete(" ")
   
-         unless targetBranch === remoteBranch then
+         unless targetBranch === remoteBranch.sub(/^origin\//, "") then
              puts "\n\n"
              puts "Skip try merging '#{remoteBranch}' ."
              next
