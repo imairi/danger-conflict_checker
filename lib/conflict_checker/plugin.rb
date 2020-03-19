@@ -9,12 +9,13 @@ module Danger
   #
   # You should replace these comments with a public description of your library.
   #
-  # @example Ensure people are well warned about merging on Mondays
+  # @example Detect other branches it will be conflicted to current.
   #
-  #          my_plugin.warn_on_mondays
+  #       conflict_checker.targetBranch = /^feature\/.*/
+  #       result = conflict_checker.detect
+  #       warn(result)
   #
   # @see  imairi/danger-conflict_checker
-  # @tags monday, weekends, time, rattata
   #
   Encoding.default_external = Encoding::UTF_8
   Encoding.default_internal = Encoding::UTF_8
